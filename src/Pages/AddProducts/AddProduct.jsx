@@ -1,9 +1,20 @@
 import { useState } from "react";
 import noImage from "../../assets/no-image.jpg";
+import { useForm } from "react-hook-form";
+import { request } from "../../axios";
+import { toast } from "react-toastify";
 
 const AddProduct = () => {
   const [variants, setVariants] = useState([]);
   const [selectedImage, setSelectedImage] = useState("");
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    reset,
+    formState: { errors },
+  } = useForm();
 
   const handleImage = (e) => {
     const { files } = e.target;
@@ -35,6 +46,28 @@ const AddProduct = () => {
       ...variants.slice(index + 1),
     ];
     setVariants(newArray);
+  };
+
+  const onSubmit = async (data) => {
+    const productData = {
+      title: data.title,
+      category: data.category,
+      price: data.price,
+      variants: variants,
+      slug: data.title + " " + data.category,
+      tags: [data.category],
+      video:
+        "https://res.cloudinary.com/dfjxig6z2/video/upload/v1717190167/Test/ts0zrfo8kcxdtttopfqp.mp4",
+    };
+    const { data: response } = await request.post(
+      "http://localhost:5000/api/products/add",
+      productData
+    );
+    if (response?.result) {
+      reset();
+      setVariants([]);
+      toast.success("Product Added Successfully.");
+    }
   };
 
   return (
@@ -109,6 +142,38 @@ const AddProduct = () => {
           )}
         </div>
       </div>
+      <form
+        action=""
+        onSubmit={handleSubmit(onSubmit)}
+        className="[&_label]:text-sm [&_input]:bg-slate-300 [&_input]:rounded [&_input]:py-1 [&_input]:px-2 [&_input]:w-2/4 mt-10"
+      >
+        <div className="flex flex-col gap-2 mb-2">
+          <label htmlFor="">Product Title</label>
+          <input type="text" {...register("title", { required: true })} />
+        </div>
+        <div className="flex flex-col gap-2 mb-2">
+          <label htmlFor="">Category</label>
+          <input type="text" {...register("category", { required: true })} />
+        </div>
+        <div className="flex flex-col gap-2 mb-2">
+          <label htmlFor="">Price</label>
+          <input type="number" {...register("price", { required: true })} />
+        </div>
+        <div className="flex flex-col gap-2 mb-2">
+          <label htmlFor="">Video</label>
+          <input type="text" {...register("video")} />
+        </div>
+        <div className="flex flex-col gap-2 mb-2">
+          <label htmlFor="">Discount</label>
+          <input type="number" {...register("discount")} />
+        </div>
+        <button
+          type="submit"
+          className="bg-black text-white py-1 px-5 rounded mt-2"
+        >
+          Submit
+        </button>
+      </form>
     </div>
   );
 };
