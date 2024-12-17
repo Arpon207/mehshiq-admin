@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import noImage from "../../assets/no-image.jpg";
 import { useForm } from "react-hook-form";
 import { request } from "../../axios";
@@ -7,6 +7,8 @@ import { toast } from "react-toastify";
 const AddProduct = () => {
   const [variants, setVariants] = useState([]);
   const [selectedImage, setSelectedImage] = useState("");
+  const [isloading, setIsLoading] = useState(false);
+  const [categories, setCategories] = useState();
 
   const {
     register,
@@ -16,29 +18,34 @@ const AddProduct = () => {
     formState: { errors },
   } = useForm();
 
-  const handleImage = (e) => {
+  const getCategories = async () => {
+    const { data } = await request.get("/categories/get");
+    setCategories(data);
+  };
+
+  const handleImage = async (e) => {
     const { files } = e.target;
+
     if (files.length > 0) {
       const reader = new FileReader();
       reader.readAsDataURL(files[0]);
       reader.onloadend = () => {
         setSelectedImage(reader.result);
       };
-      // setImageSrc(URL.createObjectURL(files[0]));
     }
   };
 
   const handleVarientSubmit = (e) => {
     e.preventDefault();
-    const colorName = e.target.colorName.value;
-    const colorCode = e.target.colorCode.value;
     const quantity = e.target.quantity.value;
     const image = selectedImage;
-    const varientData = { colorName, colorCode, quantity, image };
+    const varientData = { quantity, image };
     setVariants([...variants, varientData]);
     e.target.reset();
     setSelectedImage("");
   };
+
+  console.log(variants);
 
   const handleVariantDelete = (index) => {
     const newArray = [
@@ -49,6 +56,11 @@ const AddProduct = () => {
   };
 
   const onSubmit = async (data) => {
+    if (variants.length === 0) {
+      toast.error("There should be at least one color variant.");
+      return;
+    }
+    setIsLoading(true);
     const productData = {
       title: data.title,
       category: data.category,
@@ -63,9 +75,15 @@ const AddProduct = () => {
     if (response?.result) {
       reset();
       setVariants([]);
+      setIsLoading(false);
       toast.success("Product Added Successfully.");
     }
+    setIsLoading(false);
   };
+
+  useEffect(() => {
+    getCategories();
+  }, []);
 
   return (
     <div className="addProduct">
@@ -91,16 +109,8 @@ const AddProduct = () => {
             </div>
             <div className="[&_label]:text-sm [&_input]:bg-slate-300 [&_input]:rounded [&_input]:py-1 [&_input]:px-2 [&_input]:w-full">
               <div className="flex flex-col gap-2 mb-2">
-                <label htmlFor="">Color Name</label>
-                <input type="text" name="colorName" />
-              </div>
-              <div className="flex flex-col gap-2 mb-2">
-                <label htmlFor="">Color Code</label>
-                <input type="text" name="colorCode" />
-              </div>
-              <div className="flex flex-col gap-2 mb-2">
                 <label htmlFor="">Quantity</label>
-                <input type="text" name="quantity" />
+                <input type="text" name="quantity" required />
               </div>
               <button
                 type="submit"
@@ -114,18 +124,18 @@ const AddProduct = () => {
         <div>
           {variants.length > 0 && (
             <>
-              <div className="grid grid-cols-5 mb-5">
+              <div className="grid grid-cols-3 mb-5">
                 <p>Image</p>
-                <p>Color Name</p>
-                <p>Color Code</p>
                 <p>Quantity</p>
                 <p>Actions</p>
               </div>
-              {variants?.map(({ colorCode, colorName, image, quantity }, i) => (
-                <div className="grid grid-cols-5 mb-4 items-center" key={i}>
-                  <img src={image} alt="" className="h-14 w-14" />
-                  <p>{colorName}</p>
-                  <p>{colorCode}</p>
+              {variants?.map(({ image, quantity }, i) => (
+                <div className="grid grid-cols-3 mb-4 items-center" key={i}>
+                  <img
+                    src={image}
+                    alt=""
+                    className="h-14 w-14 object-contain border border-red-100"
+                  />
                   <p>{quantity}</p>
                   <button
                     className="text-center h-5 w-5 bg-red-600 rounded-full text-white flex items-center justify-center"
@@ -150,7 +160,15 @@ const AddProduct = () => {
         </div>
         <div className="flex flex-col gap-2 mb-2">
           <label htmlFor="">Category</label>
-          <input type="text" {...register("category", { required: true })} />
+          <select
+            {...register("category", { required: true })}
+            className="bg-slate-300 rounded py-1 px-2 w-2/4"
+          >
+            <option value="">Select Category</option>
+            {categories?.map(({ title }, i) => (
+              <option value={title}>{title}</option>
+            ))}
+          </select>
         </div>
         <div className="flex flex-col gap-2 mb-2">
           <label htmlFor="">Price</label>
@@ -166,9 +184,10 @@ const AddProduct = () => {
         </div>
         <button
           type="submit"
+          disabled={isloading}
           className="bg-black text-white py-1 px-5 rounded mt-2"
         >
-          Submit
+          {isloading ? "Waiting..." : "Submit"}
         </button>
       </form>
     </div>

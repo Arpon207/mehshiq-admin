@@ -14,6 +14,7 @@ const Sidebar = () => {
             <p>Products</p>
             <NavLink>Products</NavLink>
             <NavLink to={"/products/add"}>Add Product</NavLink>
+            <NavLink to={"/categories"}>Categories</NavLink>
           </div>
           <div>
             <p>Orders</p>
