@@ -21,9 +21,10 @@ const VariantSubmitForm = ({
 
   const handleVarientSubmit = (e) => {
     e.preventDefault();
+    const colorName = e.target.colorName.value;
     const quantity = e.target.quantity.value;
     const image = selectedImage;
-    const varientData = { quantity, image };
+    const varientData = { quantity, image, colorName };
     setVariants([...variants, varientData]);
     e.target.reset();
     setSelectedImage("");
@@ -51,6 +52,10 @@ const VariantSubmitForm = ({
           </div>
           <div className="[&_label]:text-sm">
             <div className="grid w-full max-w-sm items-center gap-1.5">
+              <label htmlFor="">Color Name</label>
+              <Input type="text" name="colorName" required />
+            </div>
+            <div className="grid w-full max-w-sm items-center gap-1.5 mt-3">
               <label htmlFor="">Quantity</label>
               <Input type="text" name="quantity" required />
             </div>

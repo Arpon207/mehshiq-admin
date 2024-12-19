@@ -23,12 +23,13 @@ const ColorVariantsTable = ({ variants, setVariants }) => {
         <TableHeader>
           <TableRow>
             <TableHead>Image</TableHead>
+            <TableHead>Color Name</TableHead>
             <TableHead>Quantity</TableHead>
             <TableHead className={"w-[50px]"}>Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {variants?.map(({ image, quantity }, i) => (
+          {variants?.map(({ image, colorName, quantity }, i) => (
             <TableRow key={i}>
               <TableCell>
                 <img
@@ -37,6 +38,7 @@ const ColorVariantsTable = ({ variants, setVariants }) => {
                   className="h-14 w-14 object-contain border border-red-100"
                 />
               </TableCell>
+              <TableCell>{colorName}</TableCell>
               <TableCell>{quantity}</TableCell>
               <TableCell>
                 <button
