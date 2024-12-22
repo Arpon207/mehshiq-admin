@@ -39,7 +39,6 @@ const AddProduct = () => {
         "https://res.cloudinary.com/dfjxig6z2/video/upload/v1717190167/Test/ts0zrfo8kcxdtttopfqp.mp4",
       description: data.description,
     };
-    console.log(productData);
     const { data: response } = await request.post("/products/add", productData);
     if (response?.result) {
       form.reset(defaultValues);

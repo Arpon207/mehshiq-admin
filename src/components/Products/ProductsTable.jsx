@@ -34,7 +34,7 @@ const ProductsTable = () => {
 
   const EditDialogue = () => {
     return (
-      <Dialog open={dialogueOpen} onOpenChange={!dialogueOpen}>
+      <Dialog open={dialogueOpen} onOpenChange={setDialogueOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Are you absolutely sure?</DialogTitle>

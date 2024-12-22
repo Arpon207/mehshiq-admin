@@ -60,6 +60,7 @@ const data = {
       title: "Orders",
       url: "#",
       icon: BookOpen,
+      isActive: true,
       items: [
         {
           title: "Orders",
