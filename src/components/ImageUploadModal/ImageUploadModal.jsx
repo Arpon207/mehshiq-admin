@@ -33,7 +33,7 @@ const ImageUploadModal = ({ setImagesModal, imageFiles, setImageFiles }) => {
   };
 
   return (
-    <div className="fixed h-[70%] w-[60%] top-0 right-0 left-0 bottom-0 m-auto z-50 shadow-md bg-white p-5">
+    <div className="fixed h-[70%] w-[60%] top-0 right-0 left-0 bottom-0 m-auto z-50 shadow-2xl bg-white p-5">
       <div className="flex items-center justify-between">
         <p className="font-medium">Upload Image</p>
         <button onClick={() => setImagesModal(false)}>

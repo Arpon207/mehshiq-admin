@@ -77,14 +77,9 @@ const AddProduct = () => {
           )}
         </div>
       </div>
-      <button
-        className="uploadImages flex items-center justify-center gap-3 my-5 bg-black text-white py-2 px-3 rounded"
-        onClick={() => setImagesModal(true)}
-      >
-        <CloudUpload /> Upload Images
-      </button>
       <ProductDetailsForm
         isloading={isloading}
+        setImagesModal={setImagesModal}
         onSubmit={onSubmit}
         form={form}
       />

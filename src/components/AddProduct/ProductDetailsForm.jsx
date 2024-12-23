@@ -8,12 +8,12 @@ import {
   SelectItem,
 } from "../ui/select";
 import { Button } from "../ui/button";
-import { Loader2 } from "lucide-react";
+import { CloudUpload, Loader2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import JoditEditor from "jodit-react";
 import { request } from "../../axios";
 
-const ProductDetailsForm = ({ onSubmit, isloading, form }) => {
+const ProductDetailsForm = ({ onSubmit, isloading, form, setImagesModal }) => {
   const [categories, setCategories] = useState();
   const editor = useRef(null);
   const [content, setContent] = useState("");
@@ -113,6 +113,13 @@ const ProductDetailsForm = ({ onSubmit, isloading, form }) => {
             />
           </div>
           <div className="my-3">
+            <button
+              type="button"
+              className="uploadImages flex items-center justify-center gap-3 my-5 bg-black text-white py-2 px-3 rounded"
+              onClick={() => setImagesModal(true)}
+            >
+              <CloudUpload /> Upload Images
+            </button>
             <FormField
               control={form.control}
               name="description"
