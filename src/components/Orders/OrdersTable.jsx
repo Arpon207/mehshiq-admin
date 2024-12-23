@@ -39,7 +39,7 @@ import {
 } from "@/components/ui/select";
 import moment from "moment/moment";
 import { useNavigate } from "react-router-dom";
-import { handleStatusUpdate } from "../../Hooks/handleStatusUpdate";
+import { handleStatusUpdate } from "../../constants/handleStatusUpdate";
 
 const OrdersTable = ({ showDateBar, showStatusUpdateDateBar, showTotal }) => {
   const [orders, setOrders] = useState([]);

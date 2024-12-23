@@ -20,6 +20,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { request } from "../../axios";
 import { X } from "lucide-react";
+import { handleStatusUpdate } from "../../constants/handleStatusUpdate";
 
 const OrderPage = () => {
   const { id } = useParams();
@@ -41,7 +42,9 @@ const OrderPage = () => {
       <div className="orderPage [&_strong]:font-medium">
         <div className="flex items-center justify-between">
           <p className="font-medium">Order Id: {order?.orderId}</p>
-          <Select>
+          <Select
+            onValueChange={(value) => handleStatusUpdate(value, order._id)}
+          >
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder={order?.status} />
             </SelectTrigger>
