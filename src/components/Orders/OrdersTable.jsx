@@ -46,7 +46,7 @@ const OrdersTable = ({ showDateBar, showStatusUpdateDateBar, showTotal }) => {
   const navigate = useNavigate();
 
   const getOrders = async () => {
-    const { data } = await request.get("http://localhost:5000/api/orders/all");
+    const { data } = await request.get("/orders/all");
     setOrders(data);
   };
 

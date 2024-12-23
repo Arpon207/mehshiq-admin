@@ -14,10 +14,7 @@ const ImageUploadModal = ({ setImagesModal, imageFiles, setImageFiles }) => {
       formData.append("images", files[i]);
     }
     try {
-      const { data } = await request.post(
-        "http://localhost:5000/api/products/image/upload",
-        formData
-      );
+      const { data } = await request.post("/products/image/upload", formData);
       setImageFiles(data.images);
       setLoading(false);
       toast.success(data.message);

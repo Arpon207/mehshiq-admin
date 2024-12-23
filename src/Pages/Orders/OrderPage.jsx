@@ -28,9 +28,7 @@ const OrderPage = () => {
   const [imageOpen, setImageOpen] = useState(false);
 
   const getOrder = async () => {
-    const { data } = await request.get(
-      `http://localhost:5000/api/orders/getOrderById?id=${id}`
-    );
+    const { data } = await request.get(`/orders/getOrderById?id=${id}`);
     setOrder(data);
   };
 
