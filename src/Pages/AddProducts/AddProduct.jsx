@@ -6,12 +6,17 @@ import { toast } from "sonner";
 import ProductDetailsForm from "../../components/AddProduct/ProductDetailsForm";
 import VariantSubmitForm from "../../components/AddProduct/VariantSubmitForm";
 import ColorVariantsTable from "../../components/AddProduct/ColorVariantsTable";
+import { CloudUpload } from "lucide-react";
+import ImageUploadModal from "../../components/ImageUploadModal/ImageUploadModal";
 
 const AddProduct = () => {
   const form = useForm();
   const [variants, setVariants] = useState([]);
   const [selectedImage, setSelectedImage] = useState("");
   const [isloading, setIsLoading] = useState(false);
+
+  const [imagesModal, setImagesModal] = useState(false);
+  const [imageFiles, setImageFiles] = useState([]);
 
   const defaultValues = {
     title: "",
@@ -35,8 +40,7 @@ const AddProduct = () => {
       variants: variants,
       slug: data.title + " " + data.category,
       tags: [data.category],
-      video:
-        "https://res.cloudinary.com/dfjxig6z2/video/upload/v1717190167/Test/ts0zrfo8kcxdtttopfqp.mp4",
+      video: data.video,
       description: data.description,
     };
     const { data: response } = await request.post("/products/add", productData);
@@ -73,11 +77,24 @@ const AddProduct = () => {
           )}
         </div>
       </div>
+      <button
+        className="uploadImages flex items-center justify-center gap-3 my-5 bg-black text-white py-2 px-3 rounded"
+        onClick={() => setImagesModal(true)}
+      >
+        <CloudUpload /> Upload Images
+      </button>
       <ProductDetailsForm
         isloading={isloading}
         onSubmit={onSubmit}
         form={form}
       />
+      {imagesModal && (
+        <ImageUploadModal
+          setImagesModal={setImagesModal}
+          imageFiles={imageFiles}
+          setImageFiles={setImageFiles}
+        />
+      )}
     </div>
   );
 };
