@@ -1,8 +1,8 @@
-import axios from "axios";
 import { toast } from "sonner";
+import { request } from "../axios";
 
 export const handleStatusUpdate = async (value, id) => {
-  const { data } = await axios.put(`/orders/handleStatus?id=${id}`, {
+  const { data } = await request.put(`/orders/handleStatus?id=${id}`, {
     status: value,
   });
   if (data) {
