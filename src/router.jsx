@@ -6,6 +6,7 @@ import Page from "./app/dashboard/page";
 import Products from "./Pages/Products/Products";
 import Orders from "./Pages/Orders/Orders";
 import OrderPage from "./Pages/Orders/OrderPage";
+import EditProduct from "./Pages/EditProduct/EditProduct";
 
 export const router = createBrowserRouter([
   {
@@ -23,6 +24,10 @@ export const router = createBrowserRouter([
       {
         path: "/products/add",
         element: <AddProduct />,
+      },
+      {
+        path: "/products/edit/:id",
+        element: <EditProduct />,
       },
       {
         path: "/orders",

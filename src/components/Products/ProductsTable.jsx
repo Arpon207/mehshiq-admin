@@ -27,10 +27,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "../ui/button";
 import { Ellipsis } from "lucide-react";
+import Loading from "./ProductsLoading";
+import { useNavigate } from "react-router-dom";
 
-const ProductsTable = () => {
-  const [products, setProducts] = useState([]);
+const ProductsTable = ({ products, isLoading, isFetching }) => {
   const [dialogueOpen, setDialogueOpen] = useState(false);
+  const navigate = useNavigate();
 
   const EditDialogue = () => {
     return (
@@ -48,14 +50,9 @@ const ProductsTable = () => {
     );
   };
 
-  const getProducts = async () => {
-    const { data } = await request.get("/products/all");
-    setProducts(data);
-  };
-
-  useEffect(() => {
-    getProducts();
-  }, []);
+  if (isLoading || isFetching) {
+    return <Loading />;
+  }
   return (
     <div className="productsTable mt-5">
       <Table>
@@ -65,7 +62,7 @@ const ProductsTable = () => {
             <TableHead>Title</TableHead>
             <TableHead>Category</TableHead>
             <TableHead>Price</TableHead>
-            <TableHead>Quantity</TableHead>
+            <TableHead>Total Quantity</TableHead>
             <TableHead className="text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -82,7 +79,12 @@ const ProductsTable = () => {
               <TableCell className="font-medium">{product?.title}</TableCell>
               <TableCell>{product?.category}</TableCell>
               <TableCell>{product?.price}</TableCell>
-              <TableCell>20</TableCell>
+              <TableCell>
+                {product?.variants.reduce(
+                  (n, { quantity }) => n + parseInt(quantity),
+                  0
+                )}
+              </TableCell>
               <TableCell className="text-right">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -94,7 +96,13 @@ const ProductsTable = () => {
                     className="w-fit flex flex-col"
                     align="end"
                   >
-                    <DropdownMenuItem onClick={() => setDialogueOpen(true)}>
+                    <DropdownMenuItem
+                      onClick={() =>
+                        navigate(`/products/edit/${product._id}`, {
+                          state: product,
+                        })
+                      }
+                    >
                       Edit Product
                     </DropdownMenuItem>
                     <DropdownMenuItem>Delete Product</DropdownMenuItem>

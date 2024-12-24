@@ -12,16 +12,34 @@ import {
   DropdownMenuTrigger,
   DropdownMenuCheckboxItem,
 } from "@/components/ui/dropdown-menu";
-import { ChevronsUpDown, Settings2 } from "lucide-react";
+import { ChevronsUpDown, RotateCw, Settings2 } from "lucide-react";
 import ProductsTable from "../../components/Products/ProductsTable";
 import OrdersTable from "../../components/Orders/OrdersTable";
+import { useQuery } from "@tanstack/react-query";
+import { request } from "../../axios";
 
 const Orders = () => {
   const [position, setPosition] = useState("outOfStock");
-
   const [showDateBar, setShowDateBar] = useState(true);
   const [showStatusUpdateDateBar, setShowStatusUpdateDateBar] = useState(false);
   const [showTotal, setShowTotal] = useState(false);
+
+  const {
+    data: { data } = {},
+    isLoading,
+    refetch,
+    isFetching,
+  } = useQuery({
+    queryKey: ["products"],
+    queryFn: () => {
+      return request.get("/orders/all");
+    },
+  });
+
+  const handleRefresh = () => {
+    refetch();
+  };
+
   return (
     <div className="products">
       {/* header starts */}
@@ -63,6 +81,13 @@ const Orders = () => {
               </DropdownMenuRadioGroup>
             </DropdownMenuContent>
           </DropdownMenu>
+          <Button
+            variant="outline"
+            className="w-48"
+            onClick={() => handleRefresh()}
+          >
+            <RotateCw className={`${isFetching && "animate-spin"}`} /> Refresh
+          </Button>
         </div>
         <div>
           <DropdownMenu>
@@ -100,6 +125,9 @@ const Orders = () => {
         showDateBar={showDateBar}
         showStatusUpdateDateBar={showStatusUpdateDateBar}
         showTotal={showTotal}
+        isLoading={isLoading}
+        orders={data}
+        isFetching={isFetching}
       />
     </div>
   );

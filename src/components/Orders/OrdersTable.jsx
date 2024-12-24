@@ -40,19 +40,22 @@ import {
 import moment from "moment/moment";
 import { useNavigate } from "react-router-dom";
 import { handleStatusUpdate } from "../../constants/handleStatusUpdate";
+import Loading from "./OrderLoading";
 
-const OrdersTable = ({ showDateBar, showStatusUpdateDateBar, showTotal }) => {
-  const [orders, setOrders] = useState([]);
+const OrdersTable = ({
+  showDateBar,
+  showStatusUpdateDateBar,
+  showTotal,
+  isLoading,
+  orders,
+  isFetching,
+}) => {
   const navigate = useNavigate();
 
-  const getOrders = async () => {
-    const { data } = await request.get("/orders/all");
-    setOrders(data);
-  };
+  if (isLoading || isFetching) {
+    return <Loading />;
+  }
 
-  useEffect(() => {
-    getOrders();
-  }, []);
   return (
     <div className="OrdersTable mt-5">
       <Table>

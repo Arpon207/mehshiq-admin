@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
+import { QueryClient, useQuery } from "@tanstack/react-query";
 
 import {
   DropdownMenu,
@@ -12,15 +13,33 @@ import {
   DropdownMenuTrigger,
   DropdownMenuCheckboxItem,
 } from "@/components/ui/dropdown-menu";
-import { ChevronsUpDown, Settings2 } from "lucide-react";
+import { ChevronsUpDown, RotateCw, Settings2 } from "lucide-react";
 import ProductsTable from "../../components/Products/ProductsTable";
+import { request } from "../../axios";
 
 const Products = () => {
   const [position, setPosition] = useState("outOfStock");
-
   const [showStatusBar, setShowStatusBar] = useState(true);
   const [showActivityBar, setShowActivityBar] = useState(false);
   const [showPanel, setShowPanel] = useState(false);
+  const queryClient = new QueryClient();
+
+  const {
+    data: { data } = {},
+    isLoading,
+    refetch,
+    isFetching,
+  } = useQuery({
+    queryKey: ["products"],
+    queryFn: () => {
+      return request.get("/products/all");
+    },
+  });
+
+  const handleRefresh = () => {
+    refetch();
+  };
+
   return (
     <div className="products">
       {/* header starts */}
@@ -89,7 +108,11 @@ const Products = () => {
           </DropdownMenu>
         </div>
       </div>
-      <ProductsTable />
+      <ProductsTable
+        products={data}
+        isLoading={isLoading}
+        isFetching={isFetching}
+      />
     </div>
   );
 };
