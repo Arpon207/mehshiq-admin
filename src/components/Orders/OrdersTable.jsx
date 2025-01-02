@@ -7,7 +7,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { request } from "../../axios";
 
 import {
@@ -41,6 +41,7 @@ import moment from "moment/moment";
 import { useNavigate } from "react-router-dom";
 import { handleStatusUpdate } from "../../constants/handleStatusUpdate";
 import Loading from "./OrderLoading";
+import { Context } from "../../Providers/AdminContext";
 
 const OrdersTable = ({
   showDateBar,
@@ -50,6 +51,7 @@ const OrdersTable = ({
   orders,
   isFetching,
 }) => {
+  const { notifications } = useContext(Context);
   const navigate = useNavigate();
 
   if (isLoading || isFetching) {
@@ -75,7 +77,9 @@ const OrdersTable = ({
             <TableRow
               key={index}
               onClick={() => navigate(`/orders/${order._id}`)}
-              className="cursor-pointer"
+              className={`cursor-pointer ${
+                notifications.find((id) => order._id === id) && "bg-slate-200"
+              }`}
             >
               <TableCell>{order?.orderId}</TableCell>
               <TableCell className="font-medium">

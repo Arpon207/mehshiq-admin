@@ -71,7 +71,7 @@ const ProductsTable = ({ products, isLoading, isFetching }) => {
             <TableRow key={index}>
               <TableCell>
                 <img
-                  src={product?.variants[0].image.url}
+                  src={product?.variants[0]?.image?.url}
                   alt=""
                   className="h-14 w-14 object-contain"
                 />

@@ -4,10 +4,10 @@ import { request } from "../../axios";
 import { toast } from "sonner";
 
 import ProductDetailsForm from "../../components/AddProduct/ProductDetailsForm";
-import VariantSubmitForm from "../../components/AddProduct/VariantSubmitForm";
-import ColorVariantsTable from "../../components/AddProduct/ColorVariantsTable";
 import ImageUploadModal from "../../components/ImageUploadModal/ImageUploadModal";
 import { useLocation } from "react-router-dom";
+import VariantsAdd from "../../components/EditProducts/VariantsAdd";
+import ColorVariantsEdit from "../../components/EditProducts/ColorVariantsEdit";
 
 const EditProduct = () => {
   const product = useLocation().state;
@@ -16,8 +16,8 @@ const EditProduct = () => {
 
   const [imagesModal, setImagesModal] = useState(false);
   const [imageFiles, setImageFiles] = useState([]);
-
-  const [variants, setVariants] = useState(product?.variants);
+  const [variants, setVariants] = useState([]);
+  const [previousVariants, setPreviousVariants] = useState(product.variants);
 
   const defaultValues = {
     title: product?.title,
@@ -65,21 +65,22 @@ const EditProduct = () => {
       <div className="addProduct">
         <h3 className="text-xl font-medium mb-5">Add Product</h3>
         <div className="grid grid-cols-2">
-          <VariantSubmitForm
+          <VariantsAdd
             variants={variants}
             setVariants={setVariants}
             selectedImage={selectedImage}
             setSelectedImage={setSelectedImage}
+            id={product._id}
           />
           <div className="colorVarient w-3/4">
-            {variants?.length > 0 && (
-              <>
-                <ColorVariantsTable
-                  variants={variants}
-                  setVariants={setVariants}
-                />
-              </>
-            )}
+            <>
+              <ColorVariantsEdit
+                variants={variants}
+                setVariants={setVariants}
+                previousVariants={previousVariants}
+                setPreviousVariants={setPreviousVariants}
+              />
+            </>
           </div>
         </div>
         <ProductDetailsForm
