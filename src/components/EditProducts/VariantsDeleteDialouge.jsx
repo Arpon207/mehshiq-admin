@@ -7,11 +7,9 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
-import axios from "axios";
 import { toast } from "sonner";
+import { request } from "../../axios";
 
 export function VariantsDeleteDialouge({
   setDeleteDialogueOpen,
@@ -19,8 +17,8 @@ export function VariantsDeleteDialouge({
   id,
 }) {
   const handleDeleteVariant = async () => {
-    const { data } = await axios.put(
-      `http://localhost:5000/api/products/deleteVariant?id=${id}&color=${deletedialogueOpen.colorName}&public_id=${deletedialogueOpen.public_id}`
+    const { data } = await request.put(
+      `/products/deleteVariant?id=${id}&color=${deletedialogueOpen.colorName}&public_id=${deletedialogueOpen.public_id}`
     );
     if (data) {
       toast("Variant deleted successfully");

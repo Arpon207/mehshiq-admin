@@ -11,13 +11,13 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Input } from "../ui/input";
-import axios from "axios";
+import { request } from "../../axios";
 
 const EditVariantDialogue = ({ dialogueOpen, setDialogueOpen, id }) => {
   const updateQuantity = async (e) => {
     e.preventDefault();
-    const { data } = await axios.put(
-      `http://localhost:5000/api/products/updateQuantity?id=${id}&color=${dialogueOpen.colorName}&quantity=${e.target.quantity.value}`
+    const { data } = await request.put(
+      `/products/updateQuantity?id=${id}&color=${dialogueOpen.colorName}&quantity=${e.target.quantity.value}`
     );
     if (data) {
       setDialogueOpen({ value: false, colorName: "" });

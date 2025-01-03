@@ -1,9 +1,9 @@
-import axios from "axios";
 import noImage from "../../assets/no-image.jpg";
 import { Input } from "../ui/input";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { Button } from "../ui/button";
+import { request } from "../../axios";
 
 const VariantsAdd = ({
   variants,
@@ -32,8 +32,8 @@ const VariantsAdd = ({
     const quantity = e.target.quantity.value;
     const image = selectedImage;
     const varientData = { quantity, image, colorName };
-    const { data } = await axios.put(
-      `http://localhost:5000/api/products/addVariant?id=${id}`,
+    const { data } = await request.put(
+      `/products/addVariant?id=${id}`,
       varientData
     );
     if (data) {

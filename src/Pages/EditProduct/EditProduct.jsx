@@ -3,11 +3,11 @@ import { useForm } from "react-hook-form";
 import { request } from "../../axios";
 import { toast } from "sonner";
 
-import ProductDetailsForm from "../../components/AddProduct/ProductDetailsForm";
 import ImageUploadModal from "../../components/ImageUploadModal/ImageUploadModal";
 import { useLocation } from "react-router-dom";
 import VariantsAdd from "../../components/EditProducts/VariantsAdd";
 import ColorVariantsEdit from "../../components/EditProducts/ColorVariantsEdit";
+import ProductDetailsEdit from "../../components/EditProducts/ProductDetailsEdit";
 
 const EditProduct = () => {
   const product = useLocation().state;
@@ -31,31 +31,27 @@ const EditProduct = () => {
     defaultValues: defaultValues,
   });
 
+  const isDirty = form.formState.isDirty;
+
   const onSubmit = async (data) => {
-    if (variants.length === 0) {
-      toast.error("There should be at least one color variant.");
-      return;
-    }
     setIsLoading(true);
     const productData = {
       title: data.title,
       category: data.category,
       price: data.price,
-      variants: variants,
       slug: data.title + " " + data.category,
       tags: [data.category],
       video: data.video,
       description: data.description,
     };
-    const { data: response } = await request.post("/products/add", productData);
-    if (response?.result) {
-      form.reset(defaultValues);
-      setVariants([]);
+    const { data: response } = await request.put(
+      `/products/editDetails?id=${product._id}`,
+      productData
+    );
+    console.log(response);
+    if (response) {
       setIsLoading(false);
-      toast("Product Added Successfully.", {
-        description: `${data.title} BDT ${data.price}`,
-      });
-      setIsLoading(false);
+      toast("Product details edited successfully.");
     }
     setIsLoading(false);
   };
@@ -63,7 +59,7 @@ const EditProduct = () => {
   return (
     <>
       <div className="addProduct">
-        <h3 className="text-xl font-medium mb-5">Add Product</h3>
+        <h3 className="text-xl font-medium mb-5">Edit Product</h3>
         <div className="grid grid-cols-2">
           <VariantsAdd
             variants={variants}
@@ -83,7 +79,7 @@ const EditProduct = () => {
             </>
           </div>
         </div>
-        <ProductDetailsForm
+        <ProductDetailsEdit
           isloading={isloading}
           setImagesModal={setImagesModal}
           onSubmit={onSubmit}
