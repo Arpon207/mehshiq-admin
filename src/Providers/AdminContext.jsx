@@ -4,7 +4,7 @@ import { toast } from "sonner";
 
 export const Context = createContext();
 
-const socket = io("https://mehshiq-backend.vercel.app");
+const socket = io("https://mehshiq-backend.onrender.com");
 
 const AdminContext = ({ children }) => {
   const [notifications, setNotifications] = useState([]);
