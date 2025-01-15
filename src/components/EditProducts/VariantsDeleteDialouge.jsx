@@ -10,17 +10,23 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import { request } from "../../axios";
+import { useContext } from "react";
+import { ProductContext } from "../../Pages/EditProduct/EditProduct";
 
 export function VariantsDeleteDialouge({
   setDeleteDialogueOpen,
   deletedialogueOpen,
   id,
 }) {
+  const { refetch } = useContext(ProductContext);
+
   const handleDeleteVariant = async () => {
     const { data } = await request.put(
       `/products/deleteVariant?id=${id}&color=${deletedialogueOpen.colorName}&public_id=${deletedialogueOpen.public_id}`
     );
     if (data) {
+      setDeleteDialogueOpen({ colorName: "", value: false, public_id: "" });
+      refetch();
       toast("Variant deleted successfully");
     }
   };

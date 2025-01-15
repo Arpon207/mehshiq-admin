@@ -97,11 +97,7 @@ const ProductsTable = ({ products, isLoading, isFetching }) => {
                     align="end"
                   >
                     <DropdownMenuItem
-                      onClick={() =>
-                        navigate(`/products/edit/${product._id}`, {
-                          state: product,
-                        })
-                      }
+                      onClick={() => navigate(`/products/edit/${product._id}`)}
                     >
                       Edit Product
                     </DropdownMenuItem>

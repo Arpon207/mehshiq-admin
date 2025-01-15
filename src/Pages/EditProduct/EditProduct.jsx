@@ -1,98 +1,66 @@
-import { useEffect, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { request } from "../../axios";
 import { toast } from "sonner";
 
 import ImageUploadModal from "../../components/ImageUploadModal/ImageUploadModal";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import VariantsAdd from "../../components/EditProducts/VariantsAdd";
 import ColorVariantsEdit from "../../components/EditProducts/ColorVariantsEdit";
 import ProductDetailsEdit from "../../components/EditProducts/ProductDetailsEdit";
+import { useQuery } from "@tanstack/react-query";
+
+export const ProductContext = createContext();
 
 const EditProduct = () => {
-  const product = useLocation().state;
+  const { id } = useParams();
+  const {
+    data: { data: product } = {},
+    isLoading,
+    refetch,
+  } = useQuery({
+    queryKey: ["product", id],
+    queryFn: () => {
+      return request.get(`/products/product/${id}`);
+    },
+  });
+
   const [selectedImage, setSelectedImage] = useState("");
-  const [isloading, setIsLoading] = useState(false);
 
   const [imagesModal, setImagesModal] = useState(false);
   const [imageFiles, setImageFiles] = useState([]);
-  const [variants, setVariants] = useState([]);
-  const [previousVariants, setPreviousVariants] = useState(product.variants);
 
-  const defaultValues = {
-    title: product?.title,
-    category: product?.category,
-    price: product?.price,
-    video: product?.video,
-    discount: product?.discount,
-    description: product?.description,
-  };
-  const form = useForm({
-    defaultValues: defaultValues,
-  });
-
-  const isDirty = form.formState.isDirty;
-
-  const onSubmit = async (data) => {
-    setIsLoading(true);
-    const productData = {
-      title: data.title,
-      category: data.category,
-      price: data.price,
-      slug: data.title + " " + data.category,
-      tags: [data.category],
-      video: data.video,
-      description: data.description,
-    };
-    const { data: response } = await request.put(
-      `/products/editDetails?id=${product._id}`,
-      productData
-    );
-    console.log(response);
-    if (response) {
-      setIsLoading(false);
-      toast("Product details edited successfully.");
-    }
-    setIsLoading(false);
-  };
+  if (isLoading) {
+    return <div>loading...</div>;
+  }
 
   return (
     <>
-      <div className="addProduct">
-        <h3 className="text-xl font-medium mb-5">Edit Product</h3>
-        <div className="grid grid-cols-2">
-          <VariantsAdd
-            variants={variants}
-            setVariants={setVariants}
-            selectedImage={selectedImage}
-            setSelectedImage={setSelectedImage}
-            id={product._id}
-          />
-          <div className="colorVarient w-3/4">
-            <>
-              <ColorVariantsEdit
-                variants={variants}
-                setVariants={setVariants}
-                previousVariants={previousVariants}
-                setPreviousVariants={setPreviousVariants}
-              />
-            </>
+      <ProductContext.Provider
+        value={{
+          product,
+          refetch,
+          selectedImage,
+          setSelectedImage,
+          setImagesModal,
+          imageFiles,
+          setImageFiles,
+        }}
+      >
+        <div className="addProduct">
+          <h3 className="text-xl font-medium mb-5">Edit Product</h3>
+          <div className="grid grid-cols-2">
+            <VariantsAdd />
+            <div className="colorVarient w-3/4">
+              <>
+                <ColorVariantsEdit />
+              </>
+            </div>
           </div>
+          <ProductDetailsEdit />
+          {imagesModal && <ImageUploadModal />}
         </div>
-        <ProductDetailsEdit
-          isloading={isloading}
-          setImagesModal={setImagesModal}
-          onSubmit={onSubmit}
-          form={form}
-        />
-        {imagesModal && (
-          <ImageUploadModal
-            setImagesModal={setImagesModal}
-            imageFiles={imageFiles}
-            setImageFiles={setImageFiles}
-          />
-        )}
-      </div>
+      </ProductContext.Provider>
     </>
   );
 };

@@ -13,13 +13,15 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { Fragment } from "react";
+import { Fragment, useEffect } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { Toaster } from "sonner";
+import { useAuthStore } from "../../store/authStore";
 
 export default function Page() {
   const pathname = useLocation().pathname;
   const pathnames = pathname.split("/").filter((path) => path);
+
   return (
     <SidebarProvider>
       <AppSidebar />

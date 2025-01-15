@@ -1,17 +1,14 @@
 import noImage from "../../assets/no-image.jpg";
 import { Input } from "../ui/input";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { Button } from "../ui/button";
 import { request } from "../../axios";
+import { ProductContext } from "../../Pages/EditProduct/EditProduct";
 
-const VariantsAdd = ({
-  variants,
-  setVariants,
-  selectedImage,
-  setSelectedImage,
-  id,
-}) => {
+const VariantsAdd = () => {
+  const { selectedImage, setSelectedImage, product, refetch } =
+    useContext(ProductContext);
   const [isLoading, setIsLoading] = useState(false);
   const handleImage = async (e) => {
     const { files } = e.target;
@@ -33,14 +30,14 @@ const VariantsAdd = ({
     const image = selectedImage;
     const varientData = { quantity, image, colorName };
     const { data } = await request.put(
-      `/products/addVariant?id=${id}`,
+      `/products/addVariant?id=${product?._id}`,
       varientData
     );
     if (data) {
       setIsLoading(false);
-      setVariants([...variants, varientData]);
       e.target.reset();
       setSelectedImage("");
+      refetch();
     }
     setIsLoading(false);
   };

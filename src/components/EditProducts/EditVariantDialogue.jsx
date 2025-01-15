@@ -12,8 +12,11 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "../ui/input";
 import { request } from "../../axios";
+import { useContext } from "react";
+import { ProductContext } from "../../Pages/EditProduct/EditProduct";
 
 const EditVariantDialogue = ({ dialogueOpen, setDialogueOpen, id }) => {
+  const { refetch } = useContext(ProductContext);
   const updateQuantity = async (e) => {
     e.preventDefault();
     const { data } = await request.put(
@@ -21,6 +24,7 @@ const EditVariantDialogue = ({ dialogueOpen, setDialogueOpen, id }) => {
     );
     if (data) {
       setDialogueOpen({ value: false, colorName: "" });
+      refetch();
     }
   };
 

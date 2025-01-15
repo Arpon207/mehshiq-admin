@@ -6,7 +6,6 @@ import { toast } from "sonner";
 import ProductDetailsForm from "../../components/AddProduct/ProductDetailsForm";
 import VariantSubmitForm from "../../components/AddProduct/VariantSubmitForm";
 import ColorVariantsTable from "../../components/AddProduct/ColorVariantsTable";
-import { CloudUpload } from "lucide-react";
 import ImageUploadModal from "../../components/ImageUploadModal/ImageUploadModal";
 
 const AddProduct = () => {
@@ -17,6 +16,7 @@ const AddProduct = () => {
 
   const [imagesModal, setImagesModal] = useState(false);
   const [imageFiles, setImageFiles] = useState([]);
+  const [uploaded, setUploaded] = useState(null);
 
   const defaultValues = {
     title: "",
@@ -33,6 +33,7 @@ const AddProduct = () => {
       return;
     }
     setIsLoading(true);
+
     const productData = {
       title: data.title,
       category: data.category,
@@ -43,7 +44,17 @@ const AddProduct = () => {
       video: data.video,
       description: data.description,
     };
-    const { data: response } = await request.post("/products/add", productData);
+    console.log(productData);
+    const { data: response } = await request.post(
+      "/products/add",
+      productData,
+      {
+        onUploadProgress: ({ loaded, total }) => {
+          setUploaded(Math.round((loaded * 100) / total));
+          console.log(Math.round((loaded * 100) / total));
+        },
+      }
+    );
     if (response?.result) {
       form.reset(defaultValues);
       setVariants([]);
@@ -51,6 +62,7 @@ const AddProduct = () => {
       toast("Product Added Successfully.", {
         description: `${data.title} BDT ${data.price}`,
       });
+      setUploaded(null);
       setIsLoading(false);
     }
     setIsLoading(false);
@@ -82,6 +94,7 @@ const AddProduct = () => {
         setImagesModal={setImagesModal}
         onSubmit={onSubmit}
         form={form}
+        uploaded={uploaded}
       />
       {imagesModal && (
         <ImageUploadModal

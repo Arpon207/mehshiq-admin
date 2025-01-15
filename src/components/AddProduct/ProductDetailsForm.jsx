@@ -12,8 +12,15 @@ import { CloudUpload, Loader2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import JoditEditor from "jodit-react";
 import { request } from "../../axios";
+import { Progress } from "@/components/ui/progress";
 
-const ProductDetailsForm = ({ onSubmit, isloading, form, setImagesModal }) => {
+const ProductDetailsForm = ({
+  onSubmit,
+  isloading,
+  form,
+  setImagesModal,
+  uploaded,
+}) => {
   const [categories, setCategories] = useState();
   const editor = useRef(null);
   const [content, setContent] = useState("");
@@ -81,7 +88,12 @@ const ProductDetailsForm = ({ onSubmit, isloading, form, setImagesModal }) => {
                 <FormItem>
                   <FormLabel>Product Price</FormLabel>
                   <FormControl>
-                    <Input placeholder="Product Price" {...field} required />
+                    <Input
+                      placeholder="Product Price"
+                      {...field}
+                      required
+                      type="number"
+                    />
                   </FormControl>
                 </FormItem>
               )}
@@ -92,9 +104,9 @@ const ProductDetailsForm = ({ onSubmit, isloading, form, setImagesModal }) => {
               name="video"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Video</FormLabel>
+                  <FormLabel>Product Video</FormLabel>
                   <FormControl>
-                    <Input placeholder="Video" {...field} />
+                    <Input placeholder="Video Url" {...field} />
                   </FormControl>
                 </FormItem>
               )}
@@ -106,7 +118,7 @@ const ProductDetailsForm = ({ onSubmit, isloading, form, setImagesModal }) => {
                 <FormItem>
                   <FormLabel>Discount</FormLabel>
                   <FormControl>
-                    <Input placeholder="Discount" {...field} />
+                    <Input placeholder="Discount" {...field} type="number" />
                   </FormControl>
                 </FormItem>
               )}
@@ -139,6 +151,9 @@ const ProductDetailsForm = ({ onSubmit, isloading, form, setImagesModal }) => {
                 </FormItem>
               )}
             />
+          </div>
+          <div className="mt-5">
+            <Progress value={uploaded} className="w-[500px]" />
           </div>
           <Button
             type="submit"

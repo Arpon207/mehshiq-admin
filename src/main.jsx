@@ -6,6 +6,7 @@ import { router } from "./router.jsx";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import AdminContext from "./Providers/AdminContext.jsx";
+import App from "./App.jsx";
 
 const queryClient = new QueryClient();
 
@@ -13,7 +14,7 @@ createRoot(document.getElementById("root")).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
       <AdminContext>
-        <RouterProvider router={router} />
+        <App />
       </AdminContext>
     </QueryClientProvider>
   </StrictMode>

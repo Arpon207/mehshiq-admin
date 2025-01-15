@@ -9,11 +9,28 @@ import {
 } from "../ui/select";
 import { Button } from "../ui/button";
 import { CloudUpload, Loader2 } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import JoditEditor from "jodit-react";
 import { request } from "../../axios";
+import { ProductContext } from "../../Pages/EditProduct/EditProduct";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
-const ProductDetailsEdit = ({ onSubmit, isloading, form, setImagesModal }) => {
+const ProductDetailsEdit = () => {
+  const { product, setImagesModal, refetch } = useContext(ProductContext);
+  const [isloading, setIsLoading] = useState(false);
+
+  const defaultValues = {
+    title: product?.title,
+    category: product?.category,
+    price: product?.price,
+    video: product?.video,
+    discount: product?.discount,
+    description: product?.description,
+  };
+  const form = useForm({
+    defaultValues: defaultValues,
+  });
   const [categories, setCategories] = useState();
   const editor = useRef(null);
   const [content, setContent] = useState("");
@@ -22,6 +39,30 @@ const ProductDetailsEdit = ({ onSubmit, isloading, form, setImagesModal }) => {
   const getCategories = async () => {
     const { data } = await request.get("/categories/get");
     setCategories(data);
+  };
+
+  const onSubmit = async (data) => {
+    setIsLoading(true);
+    const productData = {
+      title: data.title,
+      category: data.category,
+      price: data.price,
+      slug: data.title + " " + data.category,
+      tags: [data.category],
+      video: data.video,
+      description: data.description,
+    };
+    const { data: response } = await request.put(
+      `/products/editDetails?id=${product?._id}`,
+      productData
+    );
+    console.log(response);
+    if (response) {
+      setIsLoading(false);
+      toast("Product details edited successfully.");
+      refetch();
+    }
+    setIsLoading(false);
   };
 
   useEffect(() => {

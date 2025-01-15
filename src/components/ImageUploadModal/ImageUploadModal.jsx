@@ -1,10 +1,13 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { request } from "../../axios";
 import copyTextToClipboard from "copy-text-to-clipboard";
 import { Loader2, Upload, X } from "lucide-react";
 import { toast } from "sonner";
+import { ProductContext } from "../../Pages/EditProduct/EditProduct";
 
-const ImageUploadModal = ({ setImagesModal, imageFiles, setImageFiles }) => {
+const ImageUploadModal = () => {
+  const { setImageFiles, imageFiles, setImagesModal } =
+    useContext(ProductContext);
   const [loading, setLoading] = useState(false);
 
   const handleImages = async (files) => {

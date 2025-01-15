@@ -1,10 +1,4 @@
-import {
-  EllipsisVertical,
-  Pencil,
-  SlidersVertical,
-  Trash,
-  Trash2,
-} from "lucide-react";
+import { EllipsisVertical, Pencil, Trash2 } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -19,30 +13,21 @@ import {
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuPortal,
-  DropdownMenuSeparator,
   DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import { useState } from "react";
-import axios from "axios";
+import { useContext, useState } from "react";
 import EditVariantDialogue from "./EditVariantDialogue";
 
 import { Button } from "@/components/ui/button";
 import { useParams } from "react-router-dom";
 import VariantsDeleteDialouge from "./VariantsDeleteDialouge";
+import { ProductContext } from "../../Pages/EditProduct/EditProduct";
 
-const ColorVariantsEdit = ({
-  variants,
-  setVariants,
-  previousVariants,
-  setPreviousVariants,
-}) => {
+const ColorVariantsEdit = () => {
+  const { product } = useContext(ProductContext);
+
   const [dialogueOpen, setDialogueOpen] = useState({
     value: false,
     colorName: "",
@@ -53,14 +38,6 @@ const ColorVariantsEdit = ({
     public_id: "",
   });
   const { id } = useParams();
-
-  const handleVariantDelete = (index) => {
-    const newArray = [
-      ...variants.slice(0, index),
-      ...variants.slice(index + 1),
-    ];
-    setVariants(newArray);
-  };
 
   return (
     <div className="colorVariantsTable">
@@ -74,8 +51,8 @@ const ColorVariantsEdit = ({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {previousVariants?.map(({ image, colorName, quantity }, i) => (
-            <TableRow key={i} className="bg-slate-200">
+          {product.variants?.map(({ image, colorName, quantity }, i) => (
+            <TableRow key={i}>
               <TableCell>
                 <img
                   src={image?.url}
@@ -128,27 +105,6 @@ const ColorVariantsEdit = ({
                     </DropdownMenuGroup>
                   </DropdownMenuContent>
                 </DropdownMenu>
-              </TableCell>
-            </TableRow>
-          ))}
-          {variants?.map(({ image, colorName, quantity }, i) => (
-            <TableRow key={i}>
-              <TableCell>
-                <img
-                  src={image}
-                  alt=""
-                  className="h-14 w-14 object-contain border border-red-100"
-                />
-              </TableCell>
-              <TableCell>{colorName}</TableCell>
-              <TableCell>{quantity}</TableCell>
-              <TableCell>
-                <button
-                  className="text-center h-7 w-7 text-red-600 flex items-center justify-center bg-gray-300 p-1 rounded"
-                  onClick={() => handleVariantDelete(i)}
-                >
-                  <Trash2 />
-                </button>
               </TableCell>
             </TableRow>
           ))}

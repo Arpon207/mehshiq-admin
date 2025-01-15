@@ -7,11 +7,19 @@ import Products from "./Pages/Products/Products";
 import Orders from "./Pages/Orders/Orders";
 import OrderPage from "./Pages/Orders/OrderPage";
 import EditProduct from "./Pages/EditProduct/EditProduct";
+import VideoAdd from "./Pages/VideoAdd/VideoAdd";
+import Login from "./Pages/Auth/Login";
+import RedirectAuthenticatedUser from "./ProtectedRoutes/RedirectAuthenticatedUser";
+import ProtectedRoute from "./ProtectedRoutes/ProtectedRoute";
 
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <Page />,
+    element: (
+      <ProtectedRoute>
+        <Page />
+      </ProtectedRoute>
+    ),
     children: [
       {
         path: "/",
@@ -41,6 +49,18 @@ export const router = createBrowserRouter([
         path: "/categories",
         element: <Categories />,
       },
+      {
+        path: "/video",
+        element: <VideoAdd />,
+      },
     ],
+  },
+  {
+    path: "/login",
+    element: (
+      <RedirectAuthenticatedUser>
+        <Login />
+      </RedirectAuthenticatedUser>
+    ),
   },
 ]);
