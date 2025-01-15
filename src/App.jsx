@@ -7,7 +7,6 @@ import Loader from "./components/Loader/Loader";
 const App = () => {
   const { checkAuth, user, isAuthenticated, isLoading, isCheckingAuth } =
     useAuthStore();
-  console.log({ user, isAuthenticated, isLoading, isCheckingAuth });
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);

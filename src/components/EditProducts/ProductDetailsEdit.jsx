@@ -56,7 +56,6 @@ const ProductDetailsEdit = () => {
       `/products/editDetails?id=${product?._id}`,
       productData
     );
-    console.log(response);
     if (response) {
       setIsLoading(false);
       toast("Product details edited successfully.");

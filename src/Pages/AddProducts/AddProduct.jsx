@@ -44,14 +44,12 @@ const AddProduct = () => {
       video: data.video,
       description: data.description,
     };
-    console.log(productData);
     const { data: response } = await request.post(
       "/products/add",
       productData,
       {
         onUploadProgress: ({ loaded, total }) => {
           setUploaded(Math.round((loaded * 100) / total));
-          console.log(Math.round((loaded * 100) / total));
         },
       }
     );

@@ -13,7 +13,6 @@ const VideoAdd = () => {
     formData.append("file", file);
     formData.append("upload_preset", "video_upload");
     formData.append("cloud_name", "danuatfvs");
-    console.log(file);
     const { data } = await instance.post(
       `https://api.cloudinary.com/v1_1/danuatfvs/video/upload`,
       formData,
@@ -23,7 +22,6 @@ const VideoAdd = () => {
         },
       }
     );
-    console.log(data);
   };
   return (
     <div className="videoAdd">
