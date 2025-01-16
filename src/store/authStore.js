@@ -2,7 +2,7 @@ import axios from "axios";
 import { create } from "zustand";
 
 const authrequest = axios.create({
-  baseURL: "https://mehshiq-backend.vercel.app/api/",
+  baseURL: "http://localhost:5000/api",
   withCredentials: true,
 });
 
