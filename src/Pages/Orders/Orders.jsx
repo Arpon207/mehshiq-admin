@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 
@@ -17,6 +17,7 @@ import ProductsTable from "../../components/Products/ProductsTable";
 import OrdersTable from "../../components/Orders/OrdersTable";
 import { useQuery } from "@tanstack/react-query";
 import { request } from "../../axios";
+import { Context } from "../../Providers/AdminContext";
 
 const Orders = () => {
   const [position, setPosition] = useState("outOfStock");
@@ -24,20 +25,23 @@ const Orders = () => {
   const [showStatusUpdateDateBar, setShowStatusUpdateDateBar] = useState(false);
   const [showTotal, setShowTotal] = useState(false);
 
-  const {
-    data: { data } = {},
-    isLoading,
-    refetch,
-    isFetching,
-  } = useQuery({
-    queryKey: ["products"],
-    queryFn: () => {
-      return request.get("/orders/all");
-    },
-  });
+  const { orders, isOrderLoading, orderRefetch, isOrderFetching } =
+    useContext(Context);
+
+  // const {
+  //   data: { data } = {},
+  //   isLoading,
+  //   refetch,
+  //   isFetching,
+  // } = useQuery({
+  //   queryKey: ["products"],
+  //   queryFn: () => {
+  //     return request.get("/orders/all");
+  //   },
+  // });
 
   const handleRefresh = () => {
-    refetch();
+    orderRefetch();
   };
 
   return (
@@ -86,7 +90,8 @@ const Orders = () => {
             className="w-48"
             onClick={() => handleRefresh()}
           >
-            <RotateCw className={`${isFetching && "animate-spin"}`} /> Refresh
+            <RotateCw className={`${isOrderFetching && "animate-spin"}`} />{" "}
+            Refresh
           </Button>
         </div>
         <div>
@@ -125,9 +130,9 @@ const Orders = () => {
         showDateBar={showDateBar}
         showStatusUpdateDateBar={showStatusUpdateDateBar}
         showTotal={showTotal}
-        isLoading={isLoading}
-        orders={data}
-        isFetching={isFetching}
+        isLoading={isOrderLoading}
+        orders={orders}
+        isFetching={isOrderFetching}
       />
     </div>
   );

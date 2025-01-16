@@ -1,47 +1,34 @@
-import {
-  BadgeDollarSign,
-  DollarSign,
-  PackageSearch,
-  ShoppingBag,
-} from "lucide-react";
+import { ProductOverview } from "../../components/Dashboard/ProductOverview";
+import { RecentOrders } from "../../components/Dashboard/RecentOrders";
+import { RevenueChart } from "../../components/Dashboard/RevenueChart";
+import { SalesByCategory } from "../../components/Dashboard/SalesByCategory";
+import { TopCountries } from "../../components/Dashboard/TopCountries";
+import { TopCustomers } from "../../components/Dashboard/TopCustomers";
+import { TopProducts } from "../../components/Dashboard/TopProducts";
+import { WeeklyMetrics } from "../../components/Dashboard/WeeklyMetrics";
+import { TotalOrders } from "../../components/Dashboard/TotalOrders";
 
 const Dashboard = () => {
   return (
-    <div className="px-7 py-3">
-      <div className="dashboardTop grid grid-cols-4 gap-5 [&>div]:shadow-md [&>div]:rounded [&>div]:p-10 [&>div]:border [&>div]:border-[rgba(0,0,0,0.1)] ">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm">Total Sales</p>
-            <h3 className="text-xl font-medium">BDT 40000</h3>
-          </div>
-          <BadgeDollarSign />
-        </div>
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm">Total Revenue</p>
-            <h3 className="text-xl font-medium">BDT 40000</h3>
-          </div>
-          <DollarSign />
-        </div>
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm">Total Products</p>
-            <h3 className="text-xl font-medium">60</h3>
-          </div>
-          <PackageSearch />
-        </div>
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm">Products Sold</p>
-            <h3 className="text-xl font-medium">40</h3>
-          </div>
-          <ShoppingBag />
-        </div>
+    <div className="flex min-h-screen flex-col gap-6 p-8">
+      <div className="col-span-1 md:col-span-3">
+        <WeeklyMetrics />
       </div>
-      <div>
-        <div className="revenueVsCost">
-          
-        </div>
+
+      <div className="grid gap-6 md:grid-cols-2">
+        <SalesByCategory />
+        <RecentOrders />
+      </div>
+
+      <div className="grid gap-6 md:grid-cols-3">
+        <TopCustomers />
+        <TopCountries />
+        <TopProducts />
+      </div>
+
+      <div className="grid gap-6 md:grid-cols-2">
+        <ProductOverview />
+        <RevenueChart />
       </div>
     </div>
   );
