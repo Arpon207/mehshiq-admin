@@ -67,7 +67,7 @@ const ProductsTable = ({ products, isLoading, isFetching }) => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {products.map((product, index) => (
+          {products?.map((product, index) => (
             <TableRow key={index}>
               <TableCell>
                 <img
