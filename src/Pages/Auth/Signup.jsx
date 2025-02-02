@@ -20,16 +20,16 @@ import { Loader } from "lucide-react";
 import { useAuthStore } from "../../store/authStore";
 import { Link, useNavigate } from "react-router-dom";
 
-const Login = () => {
+const Signup = () => {
   const form = useForm();
   const navigate = useNavigate();
 
-  const { login, isLoading, error } = useAuthStore();
+  const { signup, isLoading, error } = useAuthStore();
 
   const onSubmit = async (data) => {
     try {
-      await login(data.email, data.password);
-      navigate("/");
+      await signup(data.email, data.password, data.name);
+      navigate("/login");
     } catch (error) {}
   };
   return (
@@ -45,6 +45,23 @@ const Login = () => {
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
               <div className="flex flex-col gap-6">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Name</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Your name"
+                          {...field}
+                          type="text"
+                          required
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
                 <FormField
                   control={form.control}
                   name="email"
@@ -91,13 +108,13 @@ const Login = () => {
                   <p className="text-sm text-red-500 text-center">{error}</p>
                 )}
                 <Button type="submit" className="w-full">
-                  {isLoading ? <Loader className="animate-spin" /> : "Login"}
+                  {isLoading ? <Loader className="animate-spin" /> : "Sign up"}
                 </Button>
               </div>
               <div className="mt-4 text-center text-sm">
-                Don&apos;t have an account?{" "}
-                <Link to={"/signup"} className="underline underline-offset-4">
-                  Sign up
+                Already have an account?{" "}
+                <Link to={"/login"} className="underline underline-offset-4">
+                  Login
                 </Link>
               </div>
             </form>
@@ -108,4 +125,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Signup;

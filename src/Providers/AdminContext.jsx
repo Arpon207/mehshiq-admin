@@ -18,6 +18,13 @@ const AdminContext = ({ children }) => {
     },
   });
 
+  const { data: { data } = {} } = useQuery({
+    queryKey: ["dashboardMetrics"],
+    queryFn: () => {
+      return request.get("/orders/dashboard-metrics");
+    },
+  });
+
   const values = {
     orders,
     isOrderLoading,

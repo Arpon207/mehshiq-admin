@@ -2,8 +2,10 @@ import axios from "axios";
 import { create } from "zustand";
 
 const authrequest = axios.create({
-  baseURL: "https://mehshiq-backend.vercel.app/api",
-  withCredentials: true,
+  baseURL:
+    import.meta.env.VITE_MODE === "production"
+      ? "https://mehshiq-backend.vercel.app/api"
+      : "http://localhost:5000/api",
 });
 
 export const useAuthStore = create((set) => ({
@@ -22,8 +24,6 @@ export const useAuthStore = create((set) => ({
         name,
       });
       set({
-        user: response.data.user,
-        isAuthenticated: true,
         isLoading: false,
       });
     } catch (error) {
@@ -42,6 +42,9 @@ export const useAuthStore = create((set) => ({
         email,
         password,
       });
+      if (response.data.success === true) {
+        localStorage.setItem("authToken", response.data.user.token);
+      }
       set({
         user: response.data.user,
         isAuthenticated: true,
@@ -57,10 +60,10 @@ export const useAuthStore = create((set) => ({
     }
   },
 
-  logout: async () => {
+  logout: () => {
     set({ isLoading: true, error: null });
     try {
-      await authrequest.post(`/auth/logout`);
+      localStorage.removeItem("authToken");
       set({
         user: null,
         isAuthenticated: false,
@@ -79,13 +82,20 @@ export const useAuthStore = create((set) => ({
   checkAuth: async () => {
     set({ isCheckingAuth: true, error: null });
     try {
-      const response = await authrequest.get(`/auth/check-auth`);
+      const response = await authrequest.get(`/auth/check-auth`, {
+        headers: {
+          authorization: `bearer ${localStorage.getItem("authToken")}`,
+        },
+      });
       set({
         user: response.data.user,
         isAuthenticated: true,
         isCheckingAuth: false,
       });
     } catch (error) {
+      if (error.status === 401) {
+        localStorage.removeItem("authToken");
+      }
       set({
         error: null,
         isAuthenticated: false,

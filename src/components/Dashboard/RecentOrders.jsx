@@ -50,8 +50,8 @@ export function RecentOrders() {
               </TableBody>
             ) : (
               <TableBody>
-                {orders?.slice(0, 5)?.map((order) => (
-                  <TableRow key={order.product}>
+                {orders?.slice(0, 5)?.map((order, index) => (
+                  <TableRow key={index}>
                     <TableCell>{order?.orderId}</TableCell>
                     <TableCell>{order?.customerName}</TableCell>
                     <TableCell>{order?.customerPhone}</TableCell>
