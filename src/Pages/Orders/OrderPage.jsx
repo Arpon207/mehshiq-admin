@@ -21,119 +21,216 @@ import { useParams } from "react-router-dom";
 import { request } from "../../axios";
 import { X } from "lucide-react";
 import { handleStatusUpdate } from "../../constants/handleStatusUpdate";
+import { useQuery } from "@tanstack/react-query";
+import moment from "moment";
 
 const OrderPage = () => {
   const { id } = useParams();
-  const [order, setOrder] = useState([]);
   const [imageOpen, setImageOpen] = useState(false);
 
-  const getOrder = async () => {
-    const { data } = await request.get(`/orders/getOrderById?id=${id}`);
-    setOrder(data);
-  };
-
-  useEffect(() => {
-    getOrder();
-  }, []);
+  const { data: { data: order } = {}, isLoading } = useQuery({
+    queryKey: ["singleOrder", id],
+    queryFn: () => {
+      return request.get(`/orders/getOrderById?id=${id}`);
+    },
+  });
+  if (isLoading) {
+    return <div>Please wait...</div>;
+  }
   return (
     <>
-      <div className="orderPage [&_strong]:font-medium">
+      <div className="orderPage [&_strong]:font-medium bg-slate-100 p-5">
         <div className="flex items-center justify-between">
           <p className="font-medium">Order Id: {order?.orderId}</p>
           <Select
-            onValueChange={(value) => handleStatusUpdate(value, order._id)}
+            onValueChange={(value) =>
+              handleStatusUpdate(value, order._id, order.products)
+            }
           >
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder={order?.status} />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                <SelectItem value="Confirmed">Confirmed</SelectItem>
-                <SelectItem value="Shipped">Shipped</SelectItem>
-                <SelectItem value="Delivered">Delivered</SelectItem>
-                <SelectItem value="Cancel">Cancel</SelectItem>
+                <SelectItem
+                  disabled={order.status === "Confirmed"}
+                  value="Confirmed"
+                >
+                  Confirmed
+                </SelectItem>
+                <SelectItem
+                  disabled={order.status === "Shipped"}
+                  value="Shipped"
+                >
+                  Shipped
+                </SelectItem>
+                <SelectItem
+                  disabled={order.status === "Delivered"}
+                  value="Delivered"
+                >
+                  Delivered
+                </SelectItem>
+                <SelectItem
+                  disabled={order.status === "Canceled"}
+                  value="Canceled"
+                >
+                  Canceled
+                </SelectItem>
+                <SelectItem
+                  disabled={order.status === "Returned"}
+                  value="Returned"
+                >
+                  Returned
+                </SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>
         </div>
-        <p className="font-medium mt-2">Products</p>
-        <div className="bg-slate-100 mt-2 p-5">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-[100px]">Variant</TableHead>
-                <TableHead>Product Name</TableHead>
-                <TableHead>Color</TableHead>
-                <TableHead>Quantity</TableHead>
-                <TableHead>Price</TableHead>
-                <TableHead>Total</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {order?.products?.map((order, index) => (
-                <TableRow key={index}>
-                  <TableCell>
-                    <img
-                      src={order.variant.image.url}
-                      alt=""
-                      onClick={() => setImageOpen(order.variant.image.url)}
-                    />
-                  </TableCell>
-                  <TableCell className="font-medium">{order?.title}</TableCell>
-                  <TableCell>{order.variant.color}</TableCell>
-                  <TableCell>{order.quantity}</TableCell>
-                  <TableCell>BDT {order.price}</TableCell>
-                  <TableCell>{order.price * order.quantity}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-          <div className="flex items-end flex-col">
-            <p>
-              Subtotal : <strong> BDT {order?.subtotal}</strong>
-            </p>
-            <p>
-              Shipping Charge : <strong>BDT {order?.shippingCharge}</strong>
-            </p>
-            <p>
-              Total :{" "}
-              <strong>BDT {order.subtotal + order.shippingCharge}</strong>
-            </p>
-          </div>
-        </div>
-        <div className="bg-slate-100 mt-5 p-5 [&_strong]:font-medium">
-          <div className="grid grid-cols-2">
-            <div>
-              <p className="font-medium mb-2">Customer Info</p>
-              <p>
-                Customer Name : <strong>{order?.customerName}</strong>
-              </p>
-              {order?.customerEmail && (
-                <p>
-                  Customer Email : <strong>{order?.customerEmail}</strong>
-                </p>
-              )}
-              <p>
-                Customer Phone : <strong>+880{order?.customerPhone}</strong>
-              </p>
+        <div className="grid grid-cols-[60%_40%] mt-5 gap-5">
+          <div>
+            <div className="bg-white p-5 rounded-md shadow-sm">
+              <p className="font-medium mt-2">Products</p>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-[100px]">Image</TableHead>
+                    <TableHead>Product Name</TableHead>
+                    <TableHead>Color</TableHead>
+                    <TableHead>Quantity</TableHead>
+                    <TableHead>Price</TableHead>
+                    <TableHead>Total</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {order?.products?.map((product, i) => (
+                    <TableRow key={i}>
+                      <TableCell>
+                        <img
+                          src={product?.variant.image.url}
+                          alt=""
+                          onClick={() => setImageOpen(order?.product?.image)}
+                        />
+                      </TableCell>
+                      <TableCell className="font-medium">
+                        {product?.title}
+                      </TableCell>
+                      <TableCell>{product?.variant.color}</TableCell>
+                      <TableCell>{product?.quantity}</TableCell>
+                      <TableCell>BDT {product?.price}</TableCell>
+                      <TableCell>
+                        {product?.price * product?.quantity}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             </div>
-            <div>
-              <p className="font-medium mb-2">Shipping</p>
-              <p>
-                Shipping Division : <strong>{order?.ShippingDivision}</strong>
-              </p>
-              <p>
-                Shipping District : <strong>{order?.shippingDistrict}</strong>
-              </p>
-              <p>
-                Shipping area : <strong>{order?.shippingArea}</strong>
-              </p>
-              <p>
-                Shipping Charge : <strong>BDT {order?.shippingCharge}</strong>
-              </p>
-              <p>
-                Payment Method : <strong>{order?.paymentMethod}</strong>
-              </p>
+            <div className="bg-white p-5 rounded-md shadow-sm mt-5">
+              <div className="flex items-center justify-between">
+                <p className="font-medium">Product Totals</p>
+                <p className="font-medium">Price</p>
+              </div>
+              <hr className="my-3" />
+              <div className="flex items-center justify-between mb-2">
+                <p className="font-medium">Subtotal</p>
+                <p>
+                  <strong> BDT {order.subtotal}</strong>
+                </p>
+              </div>
+              <div className="flex items-center justify-between mb-2">
+                <p className="font-medium">Shipping Charge</p>
+                <p>
+                  <strong>BDT {order?.shippingCharge}</strong>
+                </p>
+              </div>
+              <div className="flex items-center justify-between mb-2">
+                <p className="font-medium">Total</p>
+                <p>
+                  <strong>BDT {order?.subtotal + order?.shippingCharge}</strong>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div className="[&_strong]:font-medium">
+              <div className="bg-white p-5 rounded-md shadow-sm">
+                <h3 className="font-medium">Date Summary</h3>
+                <hr className="my-3" />
+                <div className="flex items-center justify-between mt-3 mb-2">
+                  <p className="text-sm font-medium">Order Date</p>
+                  <p>
+                    <strong> {moment(order?.createdAt).format("lll")}</strong>
+                  </p>
+                </div>
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-sm font-medium">Updated Date</p>
+                  <p>
+                    <strong> {moment(order?.createdAt).format("lll")}</strong>
+                  </p>
+                </div>
+              </div>
+              <div className="bg-white p-5 rounded-md shadow-sm mt-5">
+                <p className="font-medium mb-2">Customer Info</p>
+                <hr className="my-3" />
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-sm font-medium">Customer Name</p>
+                  <p>
+                    <strong>{order?.customerName}</strong>
+                  </p>
+                </div>
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-sm font-medium">Customer Phone</p>
+                  <p>
+                    <strong>{order?.customerPhone}</strong>
+                  </p>
+                </div>
+                {order.customerEmail && (
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="text-sm font-medium">Customer Email</p>
+                    <p>
+                      <strong>{order?.customerEmail}</strong>
+                    </p>
+                  </div>
+                )}
+              </div>
+              <div className="bg-white p-5 rounded-md shadow-sm mt-5">
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-sm font-medium">Payment Method</p>
+                  <hr className="my-3" />
+                  <p>
+                    <strong>{order?.paymentMethod}</strong>
+                  </p>
+                </div>
+              </div>
+
+              <div className="bg-white p-5 rounded-md shadow-sm mt-5">
+                <p className="font-medium mb-2">Shipping Address</p>
+                <hr className="my-3" />
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-sm font-medium">Shipping Division</p>
+                  <p>
+                    <strong>{order?.ShippingDivision}</strong>
+                  </p>
+                </div>
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-sm font-medium">Shipping District</p>
+                  <p>
+                    <strong>{order?.shippingDistrict}</strong>
+                  </p>
+                </div>
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-sm font-medium">Shipping Area</p>
+                  <p>
+                    <strong>{order?.shippingArea}</strong>
+                  </p>
+                </div>
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-sm font-medium">Shipping Charge</p>
+                  <p>
+                    <strong>BDT {order?.shippingCharge}</strong>
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </div>

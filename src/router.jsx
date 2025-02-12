@@ -12,6 +12,7 @@ import Login from "./Pages/Auth/Login";
 import RedirectAuthenticatedUser from "./ProtectedRoutes/RedirectAuthenticatedUser";
 import ProtectedRoute from "./ProtectedRoutes/ProtectedRoute";
 import Signup from "./Pages/Auth/Signup";
+import CreateOrder from "./Pages/CreateOrder/CreateOrder";
 
 export const router = createBrowserRouter([
   {
@@ -45,6 +46,10 @@ export const router = createBrowserRouter([
       {
         path: "/orders/:id",
         element: <OrderPage />,
+      },
+      {
+        path: "/orders/create",
+        element: <CreateOrder />,
       },
       {
         path: "/categories",

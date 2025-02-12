@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 
@@ -12,37 +12,69 @@ import {
   DropdownMenuTrigger,
   DropdownMenuCheckboxItem,
 } from "@/components/ui/dropdown-menu";
-import { ChevronsUpDown, RotateCw, Settings2 } from "lucide-react";
-import ProductsTable from "../../components/Products/ProductsTable";
+import {
+  CalendarIcon,
+  ChevronsUpDown,
+  RotateCw,
+  Settings2,
+} from "lucide-react";
 import OrdersTable from "../../components/Orders/OrdersTable";
-import { useQuery } from "@tanstack/react-query";
-import { request } from "../../axios";
 import { Context } from "../../Providers/AdminContext";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import moment from "moment";
+import OrderPagination from "../../components/Orders/Pagination";
 
 const Orders = () => {
-  const [position, setPosition] = useState("outOfStock");
-  const [showDateBar, setShowDateBar] = useState(true);
-  const [showStatusUpdateDateBar, setShowStatusUpdateDateBar] = useState(false);
-  const [showTotal, setShowTotal] = useState(false);
+  const [showStatusUpdateDateBar, setShowStatusUpdateDateBar] = useState(true);
 
-  const { orders, isOrderLoading, orderRefetch, isOrderFetching } =
-    useContext(Context);
-
-  // const {
-  //   data: { data } = {},
-  //   isLoading,
-  //   refetch,
-  //   isFetching,
-  // } = useQuery({
-  //   queryKey: ["products"],
-  //   queryFn: () => {
-  //     return request.get("/orders/all");
-  //   },
-  // });
+  const {
+    orders,
+    isOrderLoading,
+    orderRefetch,
+    isOrderFetching,
+    orderFilter,
+    setOrderFilter,
+    setOrderId,
+    orderDate,
+    setOrderDate,
+    setPhone,
+    setPage,
+    page,
+    count,
+    limitPerPage,
+  } = useContext(Context);
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
   const handleRefresh = () => {
+    setOrderId("");
+    setOrderDate("");
+    setOrderFilter("All");
+    setPhone("");
+    setPage(1);
     orderRefetch();
   };
+
+  const handleDateSelect = (selectedDate) => {
+    setOrderDate(selectedDate);
+    setIsCalendarOpen(false);
+    setPage(1);
+  };
+
+  const handleFilter = (value) => {
+    setOrderFilter(value);
+    setPage(1);
+  };
+
+  useEffect(() => {
+    orderRefetch();
+  }, []);
+
+  const totalPages = Math.ceil(count / limitPerPage) || 1;
 
   return (
     <div className="products">
@@ -52,39 +84,71 @@ const Orders = () => {
           <Input
             placeholder="Search by Order Id..."
             className="grid w-full max-w-sm items-center gap-1.5"
+            onChange={(e) => setOrderId(e.target.value)}
           />
           <Input
             placeholder="Search by number..."
             className="grid w-full max-w-sm items-center gap-1.5"
+            onChange={(e) => setPhone(e.target.value)}
           />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="w-48">
-                Sort
+                Filter
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-48">
-              <DropdownMenuLabel>Sort By</DropdownMenuLabel>
+              <DropdownMenuLabel>Filter By</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuRadioGroup
-                value={position}
-                onValueChange={setPosition}
+                value={orderFilter}
+                onValueChange={handleFilter}
               >
-                <DropdownMenuRadioItem value="pending">
+                <DropdownMenuRadioItem value="All">All</DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value="Pending">
                   Pending
                 </DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value="shipped">
+                <DropdownMenuRadioItem value="Shipped">
                   Shipped
                 </DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value="delivered">
+                <DropdownMenuRadioItem value="Delivered">
                   Delivered
                 </DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value="canceled">
+                <DropdownMenuRadioItem value="Canceled">
                   Canceled
+                </DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value="Returned">
+                  Returned
                 </DropdownMenuRadioItem>
               </DropdownMenuRadioGroup>
             </DropdownMenuContent>
           </DropdownMenu>
+          <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
+            <PopoverTrigger asChild>
+              <Button
+                variant={"outline"}
+                className={`w-[280px] justify-start text-left font-normal ${
+                  !orderDate ? "text-muted-foreground" : ""
+                }`}
+                onClick={() => setIsCalendarOpen(true)}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {orderDate ? (
+                  moment(orderDate).format("MMMM D, YYYY")
+                ) : (
+                  <span>Filter By Date</span>
+                )}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0">
+              <Calendar
+                mode="single"
+                selected={orderDate}
+                onSelect={handleDateSelect}
+                initialFocus
+              />
+            </PopoverContent>
+          </Popover>
           <Button
             variant="outline"
             className="w-48"
@@ -104,36 +168,24 @@ const Orders = () => {
             <DropdownMenuContent className="w-48">
               <DropdownMenuLabel>Appearance</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuCheckboxItem
-                checked={showDateBar}
-                onCheckedChange={setShowDateBar}
-              >
-                Date
-              </DropdownMenuCheckboxItem>
+
               <DropdownMenuCheckboxItem
                 checked={showStatusUpdateDateBar}
                 onCheckedChange={setShowStatusUpdateDateBar}
               >
                 Status Update Date
               </DropdownMenuCheckboxItem>
-              <DropdownMenuCheckboxItem
-                checked={showTotal}
-                onCheckedChange={setShowTotal}
-              >
-                Total
-              </DropdownMenuCheckboxItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
       </div>
       <OrdersTable
-        showDateBar={showDateBar}
         showStatusUpdateDateBar={showStatusUpdateDateBar}
-        showTotal={showTotal}
         isLoading={isOrderLoading}
         orders={orders}
         isFetching={isOrderFetching}
       />
+      <OrderPagination totalPages={totalPages} page={page} setPage={setPage} />
     </div>
   );
 };

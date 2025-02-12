@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
-import { QueryClient, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 
 import {
   DropdownMenu,
@@ -18,11 +18,11 @@ import ProductsTable from "../../components/Products/ProductsTable";
 import { request } from "../../axios";
 
 const Products = () => {
-  const [position, setPosition] = useState("outOfStock");
+  const [position, setPosition] = useState("All");
   const [showStatusBar, setShowStatusBar] = useState(true);
   const [showActivityBar, setShowActivityBar] = useState(false);
   const [showPanel, setShowPanel] = useState(false);
-  const queryClient = new QueryClient();
+  const [searchText, setSearchText] = useState("");
 
   const {
     data: { data } = {},
@@ -30,9 +30,13 @@ const Products = () => {
     refetch,
     isFetching,
   } = useQuery({
-    queryKey: ["products"],
+    queryKey: ["products", searchText, position],
     queryFn: () => {
-      return request.get("/products/all");
+      return request.get(
+        `/products/getProductsByFilter?search=${searchText}&filter=${
+          position === "All" ? "" : position
+        }`
+      );
     },
   });
 
@@ -48,28 +52,24 @@ const Products = () => {
           <Input
             placeholder="Search by titles..."
             className="grid w-full max-w-sm items-center gap-1.5"
+            onChange={(e) => setSearchText(e.target.value)}
           />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="w-48">
-                Sort
+                Filter
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-48">
-              <DropdownMenuLabel>Sort By</DropdownMenuLabel>
+              <DropdownMenuLabel>Filter By</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuRadioGroup
                 value={position}
                 onValueChange={setPosition}
               >
+                <DropdownMenuRadioItem value="All">All</DropdownMenuRadioItem>
                 <DropdownMenuRadioItem value="outOfStock">
                   Out Of Stock
-                </DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value="priceLowToHigh">
-                  Price low to hight
-                </DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value="priceHighToLow">
-                  Price high to low
                 </DropdownMenuRadioItem>
               </DropdownMenuRadioGroup>
             </DropdownMenuContent>

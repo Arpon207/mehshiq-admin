@@ -66,14 +66,14 @@ const data = {
           title: "Orders",
           url: "/orders",
         },
-        {
-          title: "Create Orders",
-          url: "/orders/create",
-        },
-        {
-          title: "Invoices",
-          url: "/invoices",
-        },
+        // {
+        //   title: "Create Orders",
+        //   url: "/orders/create",
+        // },
+        // {
+        //   title: "Invoices",
+        //   url: "/invoices",
+        // },
       ],
     },
   ],

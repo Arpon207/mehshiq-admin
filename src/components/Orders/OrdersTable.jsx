@@ -1,39 +1,17 @@
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useContext, useEffect, useState } from "react";
-import { request } from "../../axios";
-
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-  DropdownMenuItem,
-} from "@/components/ui/dropdown-menu";
-import { Button } from "../ui/button";
-import { Ellipsis } from "lucide-react";
 
 import {
   Select,
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -43,9 +21,7 @@ import { handleStatusUpdate } from "../../constants/handleStatusUpdate";
 import Loading from "./OrderLoading";
 
 const OrdersTable = ({
-  showDateBar,
   showStatusUpdateDateBar,
-  showTotal,
   isLoading,
   orders,
   isFetching,
@@ -57,15 +33,17 @@ const OrdersTable = ({
   }
 
   return (
-    <div className="OrdersTable mt-5">
+    <div className="OrdersTable mt-5 h-[calc(100vh-200px)] overflow-y-scroll">
       <Table>
         <TableHeader>
           <TableRow>
             <TableHead className="w-[100px]">Order Id</TableHead>
             <TableHead>Customer Name</TableHead>
             <TableHead>Customer Number</TableHead>
-            {showDateBar && <TableHead>Date</TableHead>}
-            <TableHead>Status Update Date</TableHead>
+            <TableHead>Date</TableHead>
+            {showStatusUpdateDateBar && (
+              <TableHead>Status Update Date</TableHead>
+            )}
             <TableHead>Total</TableHead>
             <TableHead>Status</TableHead>
           </TableRow>
@@ -81,20 +59,21 @@ const OrdersTable = ({
               <TableCell className="font-medium">
                 {order?.customerName}
               </TableCell>
-              <TableCell>+880{order.customerPhone}</TableCell>
-              {showDateBar && (
-                <TableCell>{moment(order?.createdAt).format("lll")}</TableCell>
+              <TableCell>{order.customerPhone}</TableCell>
+              <TableCell>{moment(order?.createdAt).format("lll")}</TableCell>
+              {showStatusUpdateDateBar && (
+                <TableCell>
+                  {order?.createdAt === order?.updatedAt
+                    ? "---"
+                    : moment(order?.updatedAt).format("lll")}
+                </TableCell>
               )}
-              <TableCell>
-                {order?.createdAt === order?.updatedAt
-                  ? "---"
-                  : moment(order?.updatedAt).format("lll")}
-              </TableCell>
+
               <TableCell>BDT {order.subtotal}</TableCell>
               <TableCell>
                 <Select
                   onValueChange={(value) =>
-                    handleStatusUpdate(value, order._id)
+                    handleStatusUpdate(value, order._id, order.products)
                   }
                 >
                   <SelectTrigger className="w-[180px]">
@@ -121,10 +100,16 @@ const OrdersTable = ({
                         Delivered
                       </SelectItem>
                       <SelectItem
-                        disabled={order.status === "Cancel"}
-                        value="Cancel"
+                        disabled={order.status === "Canceled"}
+                        value="Canceled"
                       >
-                        Cancel
+                        Canceled
+                      </SelectItem>
+                      <SelectItem
+                        disabled={order.status === "Returned"}
+                        value="Returned"
+                      >
+                        Returned
                       </SelectItem>
                     </SelectGroup>
                   </SelectContent>

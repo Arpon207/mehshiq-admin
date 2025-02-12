@@ -10,7 +10,7 @@ import {
 
 const Loading = () => {
   return (
-    <div className="loading">
+    <div className="loading min-h-[calc(100vh-200px)]">
       <Table>
         <TableHeader>
           <TableRow>

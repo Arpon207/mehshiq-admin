@@ -79,7 +79,12 @@ const ProductsTable = ({ products, isLoading, isFetching }) => {
               <TableCell className="font-medium">{product?.title}</TableCell>
               <TableCell>{product?.category}</TableCell>
               <TableCell>{product?.price}</TableCell>
-              <TableCell>
+              <TableCell
+                className={`${
+                  product?.variants.find((variant) => variant.quantity === 0) &&
+                  "text-yellow-600"
+                }`}
+              >
                 {product?.variants.reduce(
                   (n, { quantity }) => n + parseInt(quantity),
                   0

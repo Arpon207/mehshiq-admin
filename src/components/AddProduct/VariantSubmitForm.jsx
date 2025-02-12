@@ -57,7 +57,7 @@ const VariantSubmitForm = ({
             </div>
             <div className="grid w-full max-w-sm items-center gap-1.5 mt-3">
               <label htmlFor="">Quantity</label>
-              <Input type="text" name="quantity" required />
+              <Input type="number" name="quantity" required />
             </div>
             <button
               type="submit"
