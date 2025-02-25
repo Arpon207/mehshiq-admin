@@ -112,6 +112,7 @@ const Products = () => {
         products={data}
         isLoading={isLoading}
         isFetching={isFetching}
+        refetch={refetch}
       />
     </div>
   );

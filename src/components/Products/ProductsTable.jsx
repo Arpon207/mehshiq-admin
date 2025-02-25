@@ -7,17 +7,18 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { request } from "../../axios";
 
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 import {
   DropdownMenu,
@@ -29,30 +30,60 @@ import { Button } from "../ui/button";
 import { Ellipsis } from "lucide-react";
 import Loading from "./ProductsLoading";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
-const ProductsTable = ({ products, isLoading, isFetching }) => {
-  const [dialogueOpen, setDialogueOpen] = useState(false);
+const ProductsTable = ({ products, isLoading, isFetching, refetch }) => {
+  const [deleteDialogue, setDeleteDialogue] = useState({
+    id: "",
+    isOpen: false,
+    variants: [],
+  });
   const navigate = useNavigate();
 
-  const EditDialogue = () => {
+  function ProductDeleteDialogue() {
+    const handleDelete = async () => {
+      if (deleteDialogue.id) {
+        const { data: response } = await request.delete(
+          `/products/delete?id=${deleteDialogue.id}`,
+          { data: deleteDialogue.variants }
+        );
+        if (response?.message) {
+          refetch();
+          toast("Product Deleted Successfully");
+          setDeleteDialogue({ id: "", isOpen: false });
+        }
+      }
+    };
     return (
-      <Dialog open={dialogueOpen} onOpenChange={setDialogueOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Are you absolutely sure?</DialogTitle>
-            <DialogDescription>
-              This action cannot be undone. This will permanently delete your
-              account and remove your data from our servers.
-            </DialogDescription>
-          </DialogHeader>
-        </DialogContent>
-      </Dialog>
+      <AlertDialog
+        open={deleteDialogue.isOpen}
+        onOpenChange={setDeleteDialogue}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              Are you absolutely sure you want to delete this product?
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete this
+              product from server.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <Button onClick={() => handleDelete()} className="bg-red-500">
+              Delete
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     );
-  };
+  }
 
   if (isLoading || isFetching) {
     return <Loading />;
   }
+
   return (
     <div className="productsTable mt-5">
       <Table>
@@ -106,7 +137,17 @@ const ProductsTable = ({ products, isLoading, isFetching }) => {
                     >
                       Edit Product
                     </DropdownMenuItem>
-                    <DropdownMenuItem>Delete Product</DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() =>
+                        setDeleteDialogue({
+                          id: product?._id,
+                          isOpen: true,
+                          variants: product?.variants,
+                        })
+                      }
+                    >
+                      Delete Product
+                    </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </TableCell>
@@ -114,7 +155,7 @@ const ProductsTable = ({ products, isLoading, isFetching }) => {
           ))}
         </TableBody>
       </Table>
-      <EditDialogue />
+      <ProductDeleteDialogue />
     </div>
   );
 };
