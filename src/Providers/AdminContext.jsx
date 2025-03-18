@@ -23,7 +23,12 @@ const AdminContext = ({ children }) => {
       return request.get(
         `/orders/all?filter=${
           orderFilter === "All" ? "" : orderFilter
-        }&date=${orderDate}&orderId=${orderId}&phone=${phone}&limitPerPage=${limitPerPage}&currentPage=${page}`
+        }&date=${orderDate}&orderId=${orderId}&phone=${phone}&limitPerPage=${limitPerPage}&currentPage=${page}`,
+        {
+          headers: {
+            authorization: `bearer ${localStorage.getItem("authToken")}`,
+          },
+        }
       );
     },
   });

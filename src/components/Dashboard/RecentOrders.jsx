@@ -8,13 +8,18 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { Context } from "../../Providers/AdminContext";
 import moment from "moment/moment";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export function RecentOrders() {
-  const { orders, isOrderLoading } = useContext(Context);
+  const { orders, isOrderLoading, orderRefetch } = useContext(Context);
+
+  useEffect(() => {
+    orderRefetch();
+  }, []);
+
   return (
     <>
       <Card>

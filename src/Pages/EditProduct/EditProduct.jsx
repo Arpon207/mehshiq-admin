@@ -58,7 +58,13 @@ const EditProduct = () => {
             </div>
           </div>
           <ProductDetailsEdit />
-          {imagesModal && <ImageUploadModal />}
+          {imagesModal && (
+            <ImageUploadModal
+              setImagesModal={setImagesModal}
+              imageFiles={imageFiles}
+              setImageFiles={setImageFiles}
+            />
+          )}
         </div>
       </ProductContext.Provider>
     </>

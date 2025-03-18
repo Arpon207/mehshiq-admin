@@ -50,6 +50,7 @@ const ProductDetailsEdit = () => {
       slug: data.title + " " + data.category,
       tags: [data.category],
       video: data.video,
+      discount: data.discount,
       description: data.description,
     };
     const { data: response } = await request.put(

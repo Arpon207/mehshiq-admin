@@ -94,6 +94,7 @@ const ProductsTable = ({ products, isLoading, isFetching, refetch }) => {
             <TableHead>Category</TableHead>
             <TableHead>Price</TableHead>
             <TableHead>Total Quantity</TableHead>
+            <TableHead>Sale</TableHead>
             <TableHead className="text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -121,6 +122,7 @@ const ProductsTable = ({ products, isLoading, isFetching, refetch }) => {
                   0
                 )}
               </TableCell>
+              <TableCell>{product.discount}</TableCell>
               <TableCell className="text-right">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
