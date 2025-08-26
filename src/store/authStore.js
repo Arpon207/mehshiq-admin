@@ -1,7 +1,7 @@
 import axios from "axios";
 import { create } from "zustand";
 
-const authrequest = axios.create({
+export const authrequest = axios.create({
   baseURL:
     import.meta.env.VITE_MODE === "production"
       ? "https://mehshiq-backend.vercel.app/api"

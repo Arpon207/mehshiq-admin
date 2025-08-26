@@ -26,6 +26,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { useAuthStore } from "../store/authStore";
+import { Link } from "react-router-dom";
 
 export function NavUser({}) {
   const { isMobile } = useSidebar();
@@ -68,10 +69,10 @@ export function NavUser({}) {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <Link to={"/my-account"} className="flex items-center gap-2">
                 <BadgeCheck />
                 Account
-              </DropdownMenuItem>
+              </Link>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => logout()}>

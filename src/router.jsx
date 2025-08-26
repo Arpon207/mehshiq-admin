@@ -13,6 +13,7 @@ import RedirectAuthenticatedUser from "./ProtectedRoutes/RedirectAuthenticatedUs
 import ProtectedRoute from "./ProtectedRoutes/ProtectedRoute";
 import Signup from "./Pages/Auth/Signup";
 import CreateOrder from "./Pages/CreateOrder/CreateOrder";
+import MyAccountPage from "./Pages/Auth/MyAccount";
 
 export const router = createBrowserRouter([
   {
@@ -58,6 +59,10 @@ export const router = createBrowserRouter([
       {
         path: "/video",
         element: <VideoAdd />,
+      },
+      {
+        path: "/my-account",
+        element: <MyAccountPage />,
       },
     ],
   },
